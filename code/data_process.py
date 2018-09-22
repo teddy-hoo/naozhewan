@@ -47,18 +47,60 @@ def ji_ben_xin_xi():
     #sns.barplot(x="注册资金分段", y="是否老赖", data=outfile, palette='Set3')
     plt.show()
 
+
+
+
     #分析注册资金类型
     #sns.barplot(x="注册资本(金)币种", y="是否老赖", data=outfile, palette='Set3')
     plt.show()
 
-    sns.barplot(x="企业(机构)类型", y="是否老赖", data=outfile, palette='Set3')
+
+    #企业性质
+    outfile['企业性质'] = outfile['企业(机构)类型'].apply(lambda x:x.split('(')[0])
+    Title_Dict = {}
+    Title_Dict.update(dict.fromkeys(['有限责任公司', '有限责任', '有限责任公司分公司'], '有限责任公司'))
+    Title_Dict.update(dict.fromkeys(['集体所有制'], '集体所有制'))
+    Title_Dict.update(dict.fromkeys(['股份合作制'], '股份合作制'))
+    Title_Dict.update(dict.fromkeys(['股份有限公司', '股份','股份有限','股份有限公司分公司'], '股份有限公司'))
+    Title_Dict.update(dict.fromkeys(['农民专业合作经济组织'], '农民专业合作经济组织'))
+    Title_Dict.update(dict.fromkeys(['集体分支机构'], '集体分支机构'))
+    Title_Dict.update(dict.fromkeys(['全民所有制', '全民所有制分支机构'], '全民所有制'))
+    Title_Dict.update(dict.fromkeys(['联营'], '联营'))
+    Title_Dict.update(dict.fromkeys(['外商投资企业分公司'], '外商投资企业分公司'))
+    Title_Dict.update(dict.fromkeys(['个人独资企业'], '个人独资企业'))
+    Title_Dict.update(dict.fromkeys(['台、港、澳投资企业分公司', '投资企业分公司'], '台、港、澳投资企业分公司'))
+    outfile['企业性质'] = outfile['企业性质'].map(Title_Dict)
+    #sns.barplot(x="企业性质", y="是否老赖", data=outfile, palette='Set3')
     plt.show()
 
-    print(data_ji_ben_xin_xi.head())
+
+    #企业控制人类型 (未完,从独资合资角度分析，从国内国外组成成分分析)
+    outfile['企业控制人类型'] = outfile['企业(机构)类型'].apply(lambda x:x.split('(')[0])
+    Control_Dict = {}
+    Control_Dict.update(dict.fromkeys(['自然人投资或控股', '自然人独资', '外国自然人独资','台港澳自然人独资','外国法人独资','台港澳法人独资','非自然人投资或控股的法人独资'], '独资'))
+    Control_Dict.update(dict.fromkeys(['中外合资','台港澳与境内合资','台港澳合资','台港澳与境内合资','台港澳与外国投资者合资',''], '合资'))
+    Control_Dict.update(dict.fromkeys([''], ''))
+    Control_Dict.update(dict.fromkeys(['非上市'], '非上市'))
+    Control_Dict.update(dict.fromkeys([''], ''))
+    outfile['企业控制人类型'] = outfile['企业控制人类型'].map(Title_Dict)
+    #sns.barplot(x="企业控制人类型", y="是否老赖", data=outfile, palette='Set3')
+    plt.show()
+
+
+
+    #行业门类代码
+    #sns.barplot(x="行业门类代码", y="是否老赖", data=outfile, palette='Set3')
+    plt.show()
+
+
+    #成立日期
+    outfile['哪年成立'] = outfile['成立日期'].apply(lambda x:x.split('/')[0])
+    print(outfile['哪年成立'])
+    sns.barplot(x="哪年成立", y="是否老赖", data=outfile, palette='Set3')
+    plt.show()
 
     outfile.to_csv('outfile.csv', index=False)
 
-    print(data_ji_ben_xin_xi['企业(机构)类型'].unique())
 
     exit(1)
 
