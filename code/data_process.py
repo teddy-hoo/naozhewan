@@ -95,9 +95,63 @@ def ji_ben_xin_xi():
 
     #成立日期
     outfile['哪年成立'] = outfile['成立日期'].apply(lambda x:x.split('/')[0])
-    print(outfile['哪年成立'])
-    sns.barplot(x="哪年成立", y="是否老赖", data=outfile, palette='Set3')
+    #sns.barplot(x="哪年成立", y="是否老赖", data=outfile, palette='Set3')
     plt.show()
+
+
+
+
+    #从业人数
+    def people_label(s):
+        if (s <= 10):
+            return 1
+        elif ((s > 10) & (s <= 20)):
+            return 2
+        elif ((s > 20) & (s <= 30)):
+            return 3
+        elif ((s > 30) & (s <= 40)):
+            return 4
+        elif ((s > 40) & (s <= 50)):
+            return 5
+        elif ((s > 50) & (s <= 60)):
+            return 6
+        elif ((s > 60) & (s <= 70)):
+            return 7
+        elif ((s > 70) & (s <= 80)):
+            return 8
+        elif ((s > 80) & (s <= 90)):
+            return 9
+        elif ((s > 90) & (s <= 100)):
+            return 10
+        elif ((s > 100) & (s <= 110)):
+            return 11
+        elif ((s > 110) & (s <= 120)):
+            return 12
+        elif ((s > 120) & (s <= 130)):
+            return 13
+        elif ((s > 130) & (s <= 140)):
+            return 14
+        elif ((s > 140) & (s <= 150)):
+            return 15
+        elif ((s > 150) & (s <= 160)):
+            return 16
+        elif ((s > 160) & (s <= 170)):
+            return 17
+        elif (s > 170):
+            return 18
+    outfile['从业人数分段'] = outfile['从业人数'].apply(people_label)
+    #sns.barplot(x="从业人数分段", y="是否老赖", data=outfile, palette='Set3')
+    plt.show()
+
+
+    #投资总额(万元)
+    outfile['投资总额分段'] = outfile['投资总额(万元)'].apply(money_label)
+    #sns.barplot(x="投资总额分段", y="是否老赖", data=outfile, palette='Set3')
+    plt.show()
+
+
+    print(outfile['投资总额币种'])
+
 
     outfile.to_csv('outfile.csv', index=False)
 
