@@ -8,15 +8,35 @@ from code.lib.utils import normalize
 import matplotlib
 matplotlib.rcParams['font.sans-serif'] = 'SimHei'
 
-
 def ji_ben_xin_xi():
     data_ji_ben_xin_xi = pd.read_csv('../data/train/1.csv',
                                      keep_default_na=False,
                                      na_values=[""])
 
+    lao_lai = pd.read_csv('../data/train/8.csv',
+                                     keep_default_na=False,
+                                     na_values=[""])
+
+    lao_lai.insert(1,'是否老赖','是')
+
+    for index,row in lao_lai.iterrows():
+        x = data_ji_ben_xin_xi.loc[data_ji_ben_xin_xi['小微企业ID'] == row['小微企业ID']]
+
+    outfile = pd.merge(data_ji_ben_xin_xi, lao_lai, how='left', left_on='小微企业ID', right_on='小微企业ID')
+    outfile.to_csv('outfile.csv', index=False)
+
+
+
+    print(outfile)
+
+
+    exit(1)
+
     print(data_ji_ben_xin_xi.head())
 
     currency_exchange(data_ji_ben_xin_xi, '注册资金(万元)', '注册资本(金)币种')
+    print(data_ji_ben_xin_xi)
+    exit(1)
     data_ji_ben_xin_xi['注册资金(万元)'].plot(kind='line', title='注册资金（万元）人民币')
     plt.show(block=True)
     data_ji_ben_xin_xi = data_ji_ben_xin_xi.drop(columns=['注册资本(金)币种'])
