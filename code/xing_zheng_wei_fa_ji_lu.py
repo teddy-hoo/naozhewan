@@ -23,9 +23,9 @@ def xing_zheng_wei_fa_ji_lu():
 
 
     # 将  执法/复议/审判机关 转化为数字 然后 向量化
-    print('将 执法/复议/审判机关 转化为数字')
+    # print('将 执法/复议/审判机关 转化为数字')
     data = data.fillna('未知机关')
-    print(data.head())
+    # print(data.head())
     #print(data['执法/复议/审判机关'].unique())
     data['处罚机关'] = data.apply(fill, axis=1)
     data = data.drop(columns=['执法/复议/审判机关'])
