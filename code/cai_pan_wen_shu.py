@@ -16,7 +16,7 @@ def cai_pan_wen_shu():
 
     print('处理 裁判文书 数据...')
 
-
+    data.insert(8, '裁判文书次数', 1)
     data = data.fillna('未知')
     print(data.head())
     #print(data['诉讼地位'].unique())
@@ -35,7 +35,7 @@ def cai_pan_wen_shu():
 
     #pd.options.display.max_rows = 10
     #pd.options.display.max_columns = 50
-    #print(data)
+    print(data.head())
     return data
 
 

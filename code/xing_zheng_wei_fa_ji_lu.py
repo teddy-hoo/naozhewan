@@ -14,6 +14,7 @@ def xing_zheng_wei_fa_ji_lu():
 
     data = pd.read_csv('../data/train/4.csv')
 
+    data.insert(4, '行政处罚次数', 1)
     # 现在不知道认定日期是做什么用的，所以暂时先去掉，放在后面优化
     data = data.drop(columns=['日期类别'])
     data = data.drop(columns=['具体日期'])
@@ -31,9 +32,9 @@ def xing_zheng_wei_fa_ji_lu():
     data = data.drop(columns=['执法/复议/审判机关'])
     data = pd.get_dummies(data, prefix=['处罚机关'], columns=['处罚机关'])
     data = data.groupby('小微企业ID').sum()
-    #pd.options.display.max_rows = 1000
-    #pd.options.display.max_columns = 50
-    #print(data)
+    pd.options.display.max_rows = 1000
+    pd.options.display.max_columns = 50
+    print(data)
     return data
 
 
