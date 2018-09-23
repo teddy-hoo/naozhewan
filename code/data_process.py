@@ -28,6 +28,16 @@ def ji_ben_xin_xi():
             return 1
     outfile['是否老赖'] = outfile['是否老赖'].apply(clear_Nan)
 
+    #outfile.info()
+    #print(outfile.describe())
+
+    fig = plt.figure()
+    fig.set(alpha=0.2)
+    plt.subplot2grid((2, 3), (0, 0))
+
+
+    outfile['注册资本(金)币种'].value_counts().plot(kind='bar')
+
 
     #分析注册资金
     def money_label(s):
