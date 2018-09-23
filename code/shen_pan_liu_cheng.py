@@ -20,8 +20,8 @@ def shen_pan_liu_cheng():
     data = data.fillna('未知')
     data['审理机关'] = data.apply(fill_institution, axis=1)
 
-    data = data.drop(columns=['日期类别','具体日期','涉案事由','诉讼地位','审理机关','公告类型'])
-    data = pd.get_dummies(data, prefix=['诉讼地位'], columns=['诉讼地位'])
+    data = data.drop(columns=['日期类别','具体日期','涉案事由'])
+    data = pd.get_dummies(data, prefix=['诉讼地位','审理机关','公告类型'], columns=['诉讼地位','审理机关','公告类型'])
     data = data.groupby('小微企业ID').sum()
     return data
 
@@ -33,4 +33,4 @@ def fill_institution(row):
     return adjudicative_documents_institution(row['审理机关'])
 
 if __name__ == '__main__':
-    cai_pan_wen_shu()
+    shen_pan_liu_cheng()

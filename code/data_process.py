@@ -250,16 +250,15 @@ def build_model(init_size):
     # Adds a densely-connected layer with 64 units to the model:
     model.add(keras.layers.Dense(init_size, activation='relu'))
     # Add another:
-    model.add(keras.layers.Dense(64, activation='relu'))
+    model.add(keras.layers.Dense(50, activation='relu'))
     # Add a softmax layer with 10 output units:
-    model.add(keras.layers.Dense(10, activation='relu'))
+    model.add(keras.layers.Dense(500, activation='relu'))
 
     model.add(keras.layers.Dense(2, activation=tf.nn.softmax))
 
     model.compile(optimizer=tf.train.AdamOptimizer(0.01),
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-
     return model
 
 
@@ -281,15 +280,14 @@ if __name__ == '__main__':
 
     # print(train_data.shape, test_data.shape)
 
-    model = build_model(47)
+    model = build_model(500)
     model.fit(train_data.values, train_label.values, epochs=1, batch_size=10)
 
-    r = model.predict(test_data.values)
+    r = model.predict(test_data)
     for i in range(0,len(test_label)):
-        print("预测结果:%.0f  %.0f" % (r[i][0] ,r[i][1]))
-        print("真实结果:%d  %d" % (test_label.values[i][0],test_label.values[i][1]))
-        print()
-    print("\n")
+        if test_label.values[i][1] == 1 and (int)(r[i][1]) == 1:
+            print("预测结果:%.0f  %.0f" % (r[i][0] ,r[i][1]))
+            print("真实结果:%d  %d" % (test_label.values[i][0],test_label.values[i][1]))
     test_loss, test_acc = model.evaluate(test_data.values, test_label.values)
 
     print('Test accuracy:', test_acc)
