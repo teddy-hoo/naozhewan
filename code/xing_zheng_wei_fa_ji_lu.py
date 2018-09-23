@@ -31,6 +31,8 @@ def xing_zheng_wei_fa_ji_lu():
     data = data.drop(columns=['执法/复议/审判机关'])
     data = pd.get_dummies(data, prefix=['处罚机关'], columns=['处罚机关'])
     data = data.groupby('小微企业ID').sum()
+    #pd.options.display.max_rows = 1000
+    #pd.options.display.max_columns = 50
     #print(data)
     return data
 
