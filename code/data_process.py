@@ -155,9 +155,6 @@ def ji_ben_xin_xi():
 
     outfile.to_csv('outfile.csv', index=False)
 
-
-    exit(1)
-
     print(data_ji_ben_xin_xi.head())
 
     currency_exchange(data_ji_ben_xin_xi, '注册资金(万元)', '注册资本(金)币种')
