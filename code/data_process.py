@@ -23,6 +23,8 @@ from code.xing_zheng_wei_fa_ji_lu import xing_zheng_wei_fa_ji_lu
 from code.qian_shui_ming_dan import qian_shui_ming_dan
 from code.xian_zhi_gao_xiao_fei_ming_dan import xian_zhi_gao_xiao_fei_ming_dan
 from code.ji_ben_xin_xi import ji_ben_xin_xi
+from code.cai_pan_wen_shu import cai_pan_wen_shu
+from code.shen_pan_liu_cheng import shen_pan_liu_cheng
 
 
 # def ji_ben_xin_xi():
@@ -212,6 +214,8 @@ def data_process():
     data_na_shui_fei_zheng_chang_hu = na_shui_fei_zheng_change_hu()
     data_xing_zheng_wei_fa_ji_lu = xing_zheng_wei_fa_ji_lu()
     data_xian_zhi_gao_xiao_fei_ming_dan = xian_zhi_gao_xiao_fei_ming_dan()
+    data_cai_pan_wen_shu = cai_pan_wen_shu()
+    data_shen_pan_liu_cheng = shen_pan_liu_cheng()
 
     # 将数据合并到一个二维数组里面
     all_info = pd.merge(left=data_ji_ben_xin_xi, right=data_qian_shui_ming_dan, how='left',
@@ -221,6 +225,10 @@ def data_process():
     all_info = pd.merge(left=all_info, right=data_xing_zheng_wei_fa_ji_lu, how='left',
                         left_on='小微企业ID', right_on='小微企业ID')
     all_info = pd.merge(left=all_info, right=data_xian_zhi_gao_xiao_fei_ming_dan, how='left',
+                        left_on='小微企业ID', right_on='小微企业ID')
+    all_info = pd.merge(left=all_info, right=data_cai_pan_wen_shu, how='left',
+                        left_on='小微企业ID', right_on='小微企业ID')
+    all_info = pd.merge(left=all_info, right=data_shen_pan_liu_cheng, how='left',
                         left_on='小微企业ID', right_on='小微企业ID')
     # print(all_info)
 
@@ -276,6 +284,12 @@ if __name__ == '__main__':
     model = build_model(47)
     model.fit(train_data.values, train_label.values, epochs=1, batch_size=10)
 
+    r = model.predict(test_data.values)
+    for i in range(0,len(test_label)):
+        print("预测结果:%.0f  %.0f" % (r[i][0] ,r[i][1]))
+        print("真实结果:%d  %d" % (test_label.values[i][0],test_label.values[i][1]))
+        print()
+    print("\n")
     test_loss, test_acc = model.evaluate(test_data.values, test_label.values)
 
     print('Test accuracy:', test_acc)

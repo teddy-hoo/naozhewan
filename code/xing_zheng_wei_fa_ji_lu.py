@@ -34,7 +34,7 @@ def xing_zheng_wei_fa_ji_lu():
     data = data.groupby('小微企业ID').sum()
     pd.options.display.max_rows = 1000
     pd.options.display.max_columns = 50
-    print(data)
+    #print(data)
     return data
 
 
