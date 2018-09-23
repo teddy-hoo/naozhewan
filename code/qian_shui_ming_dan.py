@@ -3,6 +3,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from code.lib.tax import tax_organization_value, tax_type_value
+from code.lib.utils import normalize
 
 
 pd.options.display.max_rows = 10
@@ -40,6 +41,7 @@ def qian_shui_ming_dan():
     data = data.groupby(['小微企业ID', '主管税务机关数字', '所欠税种数字'], as_index=False).sum()
     data['主管税务机关-所欠税种'] = '税务' + data['主管税务机关数字'].map(str) + '-' + data['所欠税种数字'].map(str)
     data = data.drop(columns=['主管税务机关数字', '所欠税种数字'])
+    data['欠税余额(元)'] = normalize(data['欠税余额(元)'])
     data = pd.pivot_table(data, index='小微企业ID', columns=['主管税务机关-所欠税种'], values='欠税余额(元)')
     return data
 
