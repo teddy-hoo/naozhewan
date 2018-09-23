@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 from code.lib.tax import tax_organization_value, tax_type_value
 
 
+pd.options.display.max_rows = 10
+pd.options.display.max_columns = 50
+
+
 def qian_shui_ming_dan():
     """
     欠税名单 数据处理
@@ -30,9 +34,14 @@ def qian_shui_ming_dan():
     # print(data.head())
     data['所欠税种数字'] = data.apply(fill_tax_type, axis=1)
     data = data.drop(columns=['所欠税种'])
-    print(data.head(100))
+    # print(data)
 
-
+    # 加和相同税种的余额  然后将其打平 每个id变成一行
+    data = data.groupby(['小微企业ID', '主管税务机关数字', '所欠税种数字'], as_index=False).sum()
+    data['主管税务机关-所欠税种'] = '税务' + data['主管税务机关数字'].map(str) + '-' + data['所欠税种数字'].map(str)
+    data = data.drop(columns=['主管税务机关数字', '所欠税种数字'])
+    data = pd.pivot_table(data, index='小微企业ID', columns=['主管税务机关-所欠税种'], values='欠税余额(元)')
+    return data
 
 
 def fill_tax_org(row):

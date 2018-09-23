@@ -16,12 +16,16 @@ def na_shui_fei_zheng_change_hu():
     data = data.drop(columns=['认定日期'])
 
     # 将 主管税务机关 转化为数字
-    print('将 主管税务机关 转化为数字')
+    # print('将 主管税务机关 转化为数字')
     data = data.fillna('未知机关')
-    print(data.head())
+    # print(data.head())
     data['主管税务机关数字'] = data.apply(fill, axis=1)
-    print(data.head())
     data = data.drop(columns=['主管税务机关'])
+    # print(data.head(10))
+    data = pd.get_dummies(data, prefix=['主管税务机关数字'], columns=['主管税务机关数字'])
+    # print(data.head(10))
+    data = data.groupby('小微企业ID').sum()
+    # print(data)
 
     return data
 
