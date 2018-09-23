@@ -2,4 +2,3 @@ venv/
 .idea/
 *.pyc
 code/process.csv
-code/__pycache__/*
