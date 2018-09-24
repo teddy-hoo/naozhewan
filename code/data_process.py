@@ -263,8 +263,8 @@ def build_model(init_size):
 
 
 if __name__ == '__main__':
-    all_info = data_process()
-    all_info.to_csv('./process.csv', index=False)
+    # all_info = data_process()
+    # all_info.to_csv('./process.csv', index=False)
     all_info = pd.read_csv('./process.csv')
 
     # print(all_info.shape)
@@ -280,8 +280,8 @@ if __name__ == '__main__':
 
     # print(train_data.shape, test_data.shape)
 
-    model = build_model(500)
-    model.fit(train_data.values, train_label.values, epochs=1, batch_size=10)
+    model = build_model(47)
+    model.fit(train_data.values, train_label.values, epochs=8, batch_size=100000)
 
     r = model.predict(test_data)
     for i in range(0,len(test_label)):
@@ -290,4 +290,12 @@ if __name__ == '__main__':
             print("真实结果:%d  %d" % (test_label.values[i][0],test_label.values[i][1]))
     test_loss, test_acc = model.evaluate(test_data.values, test_label.values)
 
-    print('Test accuracy:', test_acc)
+    print('Test loss: ', test_loss)
+    print('Test accuracy: ', test_acc)
+
+    predictions = model.predict(test_data.values)
+
+    print(test_label.shape, predictions.shape)
+    for index, l in test_label.iterrows():
+        print('真实数据: ', l[0], l[1])
+        print('预测数据: ', predictions[index][0], predictions[index][1])

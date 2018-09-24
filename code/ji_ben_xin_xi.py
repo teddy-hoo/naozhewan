@@ -35,7 +35,10 @@ def ji_ben_xin_xi():
 
     # print(data['企业(机构)类型'].unique())
     data['企业(机构)类型'], _ = pd.factorize(data['企业(机构)类型'])
+    data['企业(机构)类型'] = normalize(data['企业(机构)类型'])
     # print(data['企业(机构)类型'].unique())
+
+    data['从业人数'] = normalize(data['从业人数'])
 
     data = data.drop(columns=['许可经营项目','一般经营项目','经营(业务)范围','成立日期'])
 
