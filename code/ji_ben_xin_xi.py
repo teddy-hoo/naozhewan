@@ -21,14 +21,14 @@ def ji_ben_xin_xi():
     # print(data['行业门类代码'].unique())
 
     currency_exchange(data, '注册资金(万元)', '注册资本(金)币种')
-    data['注册资金(万元)'].plot(kind='line', title='注册资金（万元）人民币')
+    # data['注册资金(万元)'].plot(kind='line', title='注册资金（万元）人民币')
     data = data.drop(columns=['注册资本(金)币种'])
     data['注册资金(万元)'] = normalize(data['注册资金(万元)'])
     # print(data.head())
 
     # print(data['投资总额币种'].unique())
     currency_exchange(data, '投资总额(万元)', '投资总额币种')
-    data['投资总额(万元)'].plot(kind='line', title='投资总额(万元)人民币')
+    # data['投资总额(万元)'].plot(kind='line', title='投资总额(万元)人民币')
     data = data.drop(columns=['投资总额币种'])
     data['投资总额(万元)'] = normalize(data['投资总额(万元)'])
     # print(data.head())

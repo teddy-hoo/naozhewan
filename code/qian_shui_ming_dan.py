@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from code.lib.tax import tax_organization_value, tax_type_value
 from code.lib.utils import normalize
 

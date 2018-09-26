@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+# import seaborn as sns
+# import matplotlib.pyplot as plt
 from code.lib.adjudicative_documents import *
+from code.lib.utils import normalize
 
 
 def cai_pan_wen_shu():
@@ -26,6 +27,7 @@ def cai_pan_wen_shu():
 
     #删除日期 、涉案事由
     data = data.drop(columns=['涉案事由','结案时间'])
+    data['涉案金额(元)'] = normalize(data['涉案金额(元)'])
     data = pd.get_dummies(data, prefix=['诉讼地位','审理机关','文书类型','审理程序'], columns=['诉讼地位','审理机关','文书类型','审理程序'])
     data = data.groupby('小微企业ID').sum()
     return data

@@ -1,4 +1,4 @@
-pandas
+pandas==0.23
 matplotlib
 seaborn
-tensorflow
+tensorflow==1.6
