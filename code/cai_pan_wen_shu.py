@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-# import seaborn as sns
-# import matplotlib.pyplot as plt
+import jenkspy
 from code.lib.adjudicative_documents import *
 from code.lib.utils import normalize
+import numpy as np
 
 
 def cai_pan_wen_shu():
@@ -27,16 +27,36 @@ def cai_pan_wen_shu():
 
     #删除日期 、涉案事由
     data = data.drop(columns=['涉案事由','结案时间'])
+
+    breaks = jenkspy.jenks_breaks(data['涉案金额(元)'].values, nb_class=15)
+    # print(breaks)
+    nv = np.zeros(len(data['涉案金额(元)']))
+    for i in range(0, len(breaks) - 1):
+        c = 1
+        for j, x in data['涉案金额(元)'].iteritems():
+            if breaks[i] <= x < breaks[i + 1]:
+                if i > 9:
+                    nv[j] = 10
+                else:
+                    nv[j] = i+1
+                c += 1
+    data['涉案金额(元)'] = nv
+
     data['涉案金额(元)'] = normalize(data['涉案金额(元)'])
-    data = pd.get_dummies(data, prefix=['诉讼地位','审理机关','文书类型','审理程序'], columns=['诉讼地位','审理机关','文书类型','审理程序'])
-    data = data.groupby('小微企业ID').sum()
+    # print(data)
+    data = pd.get_dummies(data, prefix=['诉讼地位', '审理机关', '文书类型', '审理程序'], columns=['诉讼地位', '审理机关','文书类型','审理程序'])
+    data = data.groupby('小微企业ID').sum().reset_index()
+    # print(data)
     return data
 
 
 def fill_role(row):
     return adjudicative_documents_fole(row['诉讼地位'])
+
+
 def fill_institution(row):
     return adjudicative_documents_institution(row['审理机关'])
+
 
 if __name__ == '__main__':
     cai_pan_wen_shu()

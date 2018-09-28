@@ -22,7 +22,7 @@ def shen_pan_liu_cheng():
 
     data = data.drop(columns=['日期类别','具体日期','涉案事由'])
     data = pd.get_dummies(data, prefix=['诉讼地位','审理机关','公告类型'], columns=['诉讼地位','审理机关','公告类型'])
-    data = data.groupby('小微企业ID').sum()
+    data = data.groupby('小微企业ID').sum().reset_index()
     return data
 
 

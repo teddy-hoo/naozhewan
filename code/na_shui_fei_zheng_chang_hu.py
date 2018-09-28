@@ -23,9 +23,9 @@ def na_shui_fei_zheng_change_hu():
     data = data.drop(columns=['主管税务机关'])
     # print(data.head(10))
     data = pd.get_dummies(data, prefix=['主管税务机关数字'], columns=['主管税务机关数字'])
-    # print(data.head(10))
-    data = data.groupby('小微企业ID').sum()
-    # print(data)
+    # print(data['小微企业ID'])
+    data = data.groupby('小微企业ID').sum().reset_index()
+    # print(data['小微企业ID'])
 
     return data
 

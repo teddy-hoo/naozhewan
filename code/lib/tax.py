@@ -12,7 +12,7 @@ def tax_organization_value(text):
         return 1
     if text.find('国税局') != -1 or text.find('国家税务局') != -1:
         return 2
-    return 0
+    return 3
 
 
 # ['增值税' '10112|城镇土地使用税' '个人所得税' '城市维护建设税' '印花税' '城镇土地使用税' '企业所得税' nan

@@ -4,6 +4,8 @@ import pandas as pd
 # import matplotlib.pyplot as plt
 from code.lib.tax import tax_organization_value, tax_type_value
 from code.lib.utils import normalize
+import jenkspy
+import numpy as np
 
 
 pd.options.display.max_rows = 10
@@ -39,10 +41,31 @@ def qian_shui_ming_dan():
 
     # 加和相同税种的余额  然后将其打平 每个id变成一行
     data = data.groupby(['小微企业ID', '主管税务机关数字', '所欠税种数字'], as_index=False).sum()
-    data['主管税务机关-所欠税种'] = '税务' + data['主管税务机关数字'].map(str) + '-' + data['所欠税种数字'].map(str)
+    # data['主管税务机关-所欠税种'] = '税务' + data['主管税务机关数字'].map(str) + '-' + data['所欠税种数字'].map(str)
     data = data.drop(columns=['主管税务机关数字', '所欠税种数字'])
+
+    breaks = jenkspy.jenks_breaks(data['欠税余额(元)'].values, nb_class=20)
+    # print(breaks)
+    nv = np.zeros(len(data['欠税余额(元)']))
+    for i in range(0, len(breaks) - 1):
+        c = 1
+        for j, x in data['欠税余额(元)'].iteritems():
+            if breaks[i] <= x < breaks[i + 1]:
+                if i > 10:
+                    nv[j] = 11
+                else:
+                    nv[j] = i+1
+                c += 1
+        # print(i)
+        # print(c)
+    data['欠税余额(元)'] = nv
+
+    # print(data['小微企业ID'])
+    # data = pd.pivot_table(data, index='小微企业ID', columns=['主管税务机关-所欠税种'], values='欠税余额(元)')
+    # print(data)
+    data = data.groupby('小微企业ID').sum().reset_index()
     data['欠税余额(元)'] = normalize(data['欠税余额(元)'])
-    data = pd.pivot_table(data, index='小微企业ID', columns=['主管税务机关-所欠税种'], values='欠税余额(元)')
+    # print(data)
     return data
 
 
