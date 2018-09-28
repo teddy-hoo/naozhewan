@@ -4,3 +4,4 @@ seaborn
 tensorflow==1.6
 sklearn
 jenkspy
+matplotlib

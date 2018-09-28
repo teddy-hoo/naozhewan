@@ -13,8 +13,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
-# import matplotlib
-# matplotlib.rcParams['font.sans-serif'] = 'SimHei'
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif'] = 'SimHei'
 
 
 pd.options.display.max_rows = 10
@@ -30,22 +30,6 @@ def data_process():
     data_xian_zhi_gao_xiao_fei_ming_dan = xian_zhi_gao_xiao_fei_ming_dan()
     data_cai_pan_wen_shu = cai_pan_wen_shu()
     data_shen_pan_liu_cheng = shen_pan_liu_cheng()
-
-    # print(data_ji_ben_xin_xi.shape)
-    # print(data_ji_ben_xin_xi['小微企业ID'].value_counts().shape)
-    # print(data_qian_shui_ming_dan.shape)
-    # print(data_qian_shui_ming_dan['小微企业ID'].value_counts().shape)
-    # print(data_na_shui_fei_zheng_chang_hu.shape)
-    # print(data_na_shui_fei_zheng_chang_hu['小微企业ID'].value_counts().shape)
-    # print(data_xing_zheng_wei_fa_ji_lu.shape)
-    # print(data_xing_zheng_wei_fa_ji_lu['小微企业ID'].value_counts().shape)
-    # print(data_xian_zhi_gao_xiao_fei_ming_dan.shape)
-    # print(data_xian_zhi_gao_xiao_fei_ming_dan['小微企业ID'].value_counts().shape)
-    # print(data_cai_pan_wen_shu.shape)
-    # print(data_cai_pan_wen_shu['小微企业ID'].value_counts().shape)
-    # print(data_shen_pan_liu_cheng.shape)
-    # print(data_shen_pan_liu_cheng['小微企业ID'].value_counts().shape)
-
 
     # 只使用特征比较齐全的数据
     ids = pd.concat([data_qian_shui_ming_dan['小微企业ID'],
@@ -69,7 +53,7 @@ def data_process():
                         left_on='小微企业ID', right_on='小微企业ID')
     all_info = pd.merge(left=all_info, right=data_shen_pan_liu_cheng, how='left',
                         left_on='小微企业ID', right_on='小微企业ID')
-    # print(all_info)
+    # # print(all_info)
 
     # 将老赖的信息并入基本信息中
     lao_lai = pd.read_csv('../data/train/8.csv',
@@ -95,26 +79,60 @@ def data_process():
     return all_info
 
 
+# def build_model(shape):
+#     model = keras.Sequential([
+#         keras.layers.Dense(128, activation=tf.nn.relu,
+#                            input_shape=(shape,)),
+#         keras.layers.Dropout(0.5),
+#         keras.layers.Dense(64, activation=tf.nn.relu),
+#         keras.layers.Dropout(0.5),
+#         keras.layers.Dense(32, activation=tf.nn.relu),
+#         keras.layers.Dropout(0.5),
+#         keras.layers.Dense(2)
+#       ])
+#
+#     optimizer = tf.train.AdamOptimizer(0.001)
+#
+#     model.compile(loss='sparse_categorical_crossentropy',
+#                   optimizer=optimizer,
+#                   metrics=['accuracy'])
+#     return model
+
+
 def build_model(init_size):
     model = keras.Sequential()
-    model.add(keras.layers.Dense(init_size, activation='relu'))
-    model.add(keras.layers.Dense(100, activation='relu'))
-    model.add(keras.layers.Dense(90, activation='relu'))
-    model.add(keras.layers.Dense(80, activation='relu'))
-    model.add(keras.layers.Dense(70, activation='relu'))
-    model.add(keras.layers.Dense(60, activation='relu'))
-    model.add(keras.layers.Dense(50, activation='relu'))
-    model.add(keras.layers.Dense(40, activation='relu'))
-    model.add(keras.layers.Dense(30, activation='relu'))
-    model.add(keras.layers.Dense(20, activation='relu'))
-    model.add(keras.layers.Dense(10, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu', input_shape=(init_size, )))
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Dense(64, activation='relu'))
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Dense(32, activation='relu'))
+    model.add(keras.layers.Dropout(0.5))
 
     model.add(keras.layers.Dense(2, activation=tf.nn.softmax))
 
-    model.compile(optimizer=tf.train.AdamOptimizer(0.01),
+    model.compile(optimizer=tf.train.AdamOptimizer(0.001),
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     return model
+
+
+EPOCHS = 200
+
+
+def plot_history(history):
+  plt.figure()
+  plt.xlabel('Epoch')
+  plt.ylabel('Mean Abs Error')
+  plt.plot(history.epoch, np.array(history.history['loss']),
+           label='Train Loss')
+  plt.plot(history.epoch, np.array(history.history['val_loss']),
+           label='Val Loss')
+  plt.plot(history.epoch, np.array(history.history['acc']),
+           label='Train Acc')
+  plt.plot(history.epoch, np.array(history.history['val_acc']), label='Val Acc')
+  plt.legend()
+  # plt.ylim([0, 1])
+  plt.show()
 
 
 if __name__ == '__main__':
@@ -127,7 +145,7 @@ if __name__ == '__main__':
     all_info = all_info.loc[all_info['是否老赖'] != 1]
     print(all_info.shape)
     # 让老赖和非老赖的数据量平均一些
-    m = np.random.random(len(all_info)) < 0.05
+    m = np.random.random(len(all_info)) < 0.2
     all_info = all_info[m]
     all_info = pd.concat([all_info, lao_lai_data])
     all_info = all_info.sample(frac=1)
@@ -146,8 +164,13 @@ if __name__ == '__main__':
 
     # print(train_data.shape, test_data.shape)
 
-    model = build_model(158)
-    model.fit(train_data.values, train_label.values, epochs=10, batch_size=1000)
+    model = build_model(len(train_data.columns))
+    # model.summary()
+
+    history = model.fit(train_data.values, train_label.values, epochs=EPOCHS, validation_split=0.2, verbose=0)
+    plot_history(history)
+
+    # model.fit(train_data.values, train_label.values, epochs=10, batch_size=1000)
 
     test_loss, test_acc = model.evaluate(test_data.values, test_label.values)
 
