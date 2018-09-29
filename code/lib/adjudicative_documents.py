@@ -22,7 +22,7 @@ def adjudicative_documents_fole(text):
     if text == '被申请执行人':
         return 7
     if text == '申请再审人' or text.find('再审申请人') != -1:
-        return 8
+        return 3
     if text == '再审被申请人':
         return 9
     if text == '起诉人':
@@ -32,17 +32,17 @@ def adjudicative_documents_fole(text):
     if text.find('第三人') != -1:
         return 12
     if text.find('案外人') != -1:
-        return 13
+        return 12
     if text.find('异议人') != -1:
-        return 14
+        return 12
     if text.find('复议申请人') != -1:
         return 15
     if text == '被审申请人':
         return 16
     if text == '被罚款人':
-        return 17
+        return 1
     if text == '被申诉人':
-        return 18
+        return 3
     return 0
 
 
@@ -202,3 +202,119 @@ def adjudicative_documents_institution(text):
 #  '商业诋毁纠纷' '法律服务合同纠纷' '侵犯商标专用权纠纷' '实现担保物权' '联营合同纠纷' '职务侵占罪' '消费者权益保护纠纷'
 #  '意外伤害保险合同纠纷' '合资、合作开发房地产合同纠纷' '确认不侵害专利权纠纷' '保险纠纷' '借用合同纠纷' '技术咨询合同纠纷'
 #  '房屋拆迁管理' '海上、通海水域保险合同纠纷']
+
+
+# ['执行程序' '一审' '二审' '再审程序' '破产程序' '财产保全程序' '公示催告程序' '行政非诉审查程序' '其他' '再审二审'
+ # '提审' '确认申请程序' '督促程序' '司法制裁程序' '再审一审']
+def shen_pan_cheng_xu(text):
+    if text == '执行程序' or text == '一审' or text == '二审' or\
+            text == '再审程序' or text == '再审二审' or text == '提审' or text == '确认申请程序' \
+            or text == '再审一审' or text == '司法制裁程序':
+        return 1
+    if text == '财产保全程序':
+        return 2
+    if text == '公示催告程序' or text == '督促程序':
+        return 3
+    if text == '行政非诉审查程序':
+        return 4
+    return 5
+
+# ['执行裁定书' '民事判决书' '民事裁定书' '行政判决书' '行政裁定书' '刑事判决书' '民事调解书' '裁定书' '执行决定书'
+#  '结案通知书' '刑事裁定书' '支付令']
+# ['执行裁定书' '民事判决书' '民事裁定书' '行政裁定书' '刑事判决书' '民事调解书' '行政判决书' '裁定书' '决定书'
+#  '结案通知书' '支付令' '执行决定书' '罚款决定书' '刑事裁定书' '行政执行裁定书']
+def wen_shu_lei_xing(text):
+    if text == '执行裁定书':
+        return 1
+    if text == '民事判决书':
+        return 2
+    if text == '民事裁定书':
+        return 3
+    if text == '行政判决书':
+        return 4
+    if text == '行政裁定书':
+        return 5
+    if text == '执行裁定书':
+        return 6
+    if text == '刑事判决书':
+        return 7
+    if text == '民事调解书':
+        return 8
+    if text == '裁定书':
+        return 9
+    if text == '执行决定书':
+        return 10
+    if text == '支付令':
+        return 11
+    if text == '执行裁定书':
+        return 12
+    if text == '执行裁定书':
+        return 13
+    if text == '决定书':
+        return 2
+    if text == '罚款决定书':
+        return 10
+    if text == '行政执行裁定书':
+        return 5
+
+# ['裁判文书' '起诉状副本及开庭传票' '诉状副本及开庭传票' '开庭信息' '送达裁判文书' '送达信息' '起诉状、上诉状副本' '审理进度'
+#  '公示催告' '立案信息' '申请公示催告' '送达诉状副本及开庭传票' '其他审判流程信息' '送达仲裁文书' '通知公告' '送达执行文书'
+#  '更正' '开庭传票' '其他司法送达' '执行文书' '破产文书' '通知书' '其他' '破产清算债务人' '破产清算公告' '仲裁文书'
+#  '送达上诉状']
+def gong_gao(text):
+    if text == '裁判文书':
+        return 1
+    if text == '起诉状副本及开庭传票':
+        return 2
+    if text == '诉状副本及开庭传票':
+        return 3
+    if text == '开庭信息':
+        return 4
+    if text == '送达裁判文书':
+        return 5
+    if text == '送达信息':
+        return 6
+    if text == '起诉状、上诉状副本':
+        return 7
+    if text == '民事调解书':
+        return 8
+    if text == '审理进度':
+        return 9
+    if text == '公示催告':
+        return 10
+    if text == '立案信息':
+        return 11
+    if text == '申请公示催告':
+        return 12
+    if text == '送达诉状副本及开庭传票':
+        return 13
+    if text == '其他审判流程信息':
+        return 14
+    if text == '送达仲裁文书':
+        return 15
+    if text == '通知公告':
+        return 16
+    if text == '送达执行文书':
+        return 17
+    if text == '更正':
+        return 18
+    if text == '开庭传票':
+        return 19
+    if text == '其他司法送达':
+        return 7
+    if text == '执行文书':
+        return 21
+    if text == '破产文书':
+        return 22
+    if text == '通知书':
+        return 23
+    if text == '其他':
+        return 7
+    if text == '破产清算债务人':
+        return 25
+    if text == '破产清算公告' or text == '清算公告':
+        return 25
+    if text == '仲裁文书':
+        return 15
+    if text == '送达上诉状':
+        return 7

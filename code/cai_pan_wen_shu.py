@@ -7,21 +7,25 @@ from code.lib.utils import normalize
 import numpy as np
 
 
-def cai_pan_wen_shu():
+def cai_pan_wen_shu(path_prefix='../data/train/'):
     """
     裁判文书 数据处理
     :return: pd.DataFrame
     """
 
-    data = pd.read_csv('../data/train/2.csv')
+    data = pd.read_csv(path_prefix + '2.csv')
 
-    print('处理 裁判文书 数据...')
+    # print('处理 裁判文书 数据...')
 
     data.insert(8, '裁判文书次数', 1)
     data = data.fillna('未知')
     #print(data.head())
     data['诉讼地位'] = data.apply(fill_role, axis=1)
     data['审理机关'] = data.apply(fill_institution, axis=1)
+    data['审理程序'] = data.apply(fill_cheng_xu, axis=1)
+    data['文书类型'] = data.apply(fill_wen_shu, axis=1)
+    # print(data['文书类型'].unique())
+    # data['审理程序'] = data.apply(fille)
 
     #print(data['涉案事由'].unique())#后期处理
 
@@ -42,7 +46,6 @@ def cai_pan_wen_shu():
                 c += 1
     data['涉案金额(元)'] = nv
 
-    data['涉案金额(元)'] = normalize(data['涉案金额(元)'])
     # print(data)
     data = pd.get_dummies(data, prefix=['诉讼地位', '审理机关', '文书类型', '审理程序'], columns=['诉讼地位', '审理机关','文书类型','审理程序'])
     data = data.groupby('小微企业ID').sum().reset_index()
@@ -58,5 +61,19 @@ def fill_institution(row):
     return adjudicative_documents_institution(row['审理机关'])
 
 
+def fill_cheng_xu(row):
+    return shen_pan_cheng_xu(row['审理程序'])
+
+
+def fill_wen_shu(row):
+    return wen_shu_lei_xing(row['文书类型'])
+
+
 if __name__ == '__main__':
-    cai_pan_wen_shu()
+    data = cai_pan_wen_shu()
+    data.to_csv('../data/processed/2.csv')
+    data_t = cai_pan_wen_shu('../data/test/')
+    data_t.to_csv('../data/processed/2_test.csv')
+    # print(len(data['文书类型'].unique()))
+    # print(np.setdiff1d(data['文书类型'].values, data_t['文书类型'].values))
+    # print(np.setdiff1d(data_t['文书类型'].values, data['文书类型'].values))

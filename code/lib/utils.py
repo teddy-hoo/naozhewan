@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from sklearn import preprocessing
 
-def normalize(cell):
-    return (cell - cell.min() + 1) / (cell.max() - cell.min() + 1)
+
+def normalize(arr):
+    scaler = preprocessing.MinMaxScaler()
+    return scaler.fit_transform(arr)

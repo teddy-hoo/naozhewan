@@ -30,15 +30,15 @@
 def sanction_organization_value(text):
     if text.find('法院') != -1:
         return "法院"
-    if text.find('税务局') != -1:
+    if text.find('税务') != -1:
         return "税务"
     if text.find('环境保护') != -1 or text.find('环保局') != -1:
-        return "环保"
+        return "管理科"
     if text.find('工商') != -1 or text.find('注册登记') != -1:
         return "工商"
     if text.find('经检队') != -1 or text.find('检查中队') != -1:
         return "经检"
-    if text.find('公平交易') != -1 or text.find('消费者权益保护部门') != -1 or text.find('市场监督') != -1:
+    if text.find('公平交易') != -1 or text.find('消费者权益保护部门') != -1 or text.find('监督') != -1 or text.find('监管') != -1:
         return "市场"
     if text.find('未知机关') != -1:
         return "未知"
@@ -49,12 +49,12 @@ def sanction_organization_value(text):
     if text.find('规划局') != -1 or text.find('市住建局') != -1 or text.find('城市管理局') != -1 or text.find('住房和城乡建设局') != -1:
         return "建设"
     if text.find('海关') != -1 or text.find('出入境检验检疫局') != -1:
-        return "海关"
+        return "税务"
     if text.find('食品药品监督管理局') != -1:
         return "卫生"
     if text.find('管理科') != -1:
         return "管理科"
-    return 0
+    return '未知'
 
 
 # ['增值税' '10112|城镇土地使用税' '个人所得税' '城市维护建设税' '印花税' '城镇土地使用税' '企业所得税' nan

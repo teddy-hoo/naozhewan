@@ -4,13 +4,13 @@ import pandas as pd
 from code.lib.tax import tax_organization_value
 
 
-def na_shui_fei_zheng_change_hu():
+def na_shui_fei_zheng_change_hu(path_prefix='../data/train/'):
     """
     纳税非正常户 数据处理
     :return: pd.DataFrame
     """
 
-    data = pd.read_csv('../data/train/6.csv')
+    data = pd.read_csv(path_prefix + '6.csv')
 
     # 现在不知道认定日期是做什么用的，所以暂时先去掉，放在后面优化
     data = data.drop(columns=['认定日期'])
@@ -35,4 +35,7 @@ def fill(row):
 
 
 if __name__ == '__main__':
-    na_shui_fei_zheng_change_hu()
+    data = na_shui_fei_zheng_change_hu()
+    data.to_csv('../data/processed/6.csv')
+    data = na_shui_fei_zheng_change_hu('../data/test/')
+    data.to_csv('../data/processed/6_test.csv')

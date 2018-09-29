@@ -12,13 +12,13 @@ pd.options.display.max_rows = 10
 pd.options.display.max_columns = 50
 
 
-def qian_shui_ming_dan():
+def qian_shui_ming_dan(path_prefix='../data/train/'):
     """
     欠税名单 数据处理
     :return:
     """
 
-    data = pd.read_csv('../data/train/5.csv')
+    data = pd.read_csv(path_prefix + '5.csv')
 
     # 欠税属期  具体日期  目前不明白其业务意义 暂时先去掉
     data = data.drop(columns=['欠税属期', '具体日期'])
@@ -64,7 +64,6 @@ def qian_shui_ming_dan():
     # data = pd.pivot_table(data, index='小微企业ID', columns=['主管税务机关-所欠税种'], values='欠税余额(元)')
     # print(data)
     data = data.groupby('小微企业ID').sum().reset_index()
-    data['欠税余额(元)'] = normalize(data['欠税余额(元)'])
     # print(data)
     return data
 
@@ -78,4 +77,7 @@ def fill_tax_type(row):
 
 
 if __name__ == '__main__':
-    qian_shui_ming_dan()
+    data = qian_shui_ming_dan()
+    data.to_csv('../data/processed/5.csv')
+    data = qian_shui_ming_dan('../data/test/')
+    data.to_csv('../data/processed/5_test.csv')
