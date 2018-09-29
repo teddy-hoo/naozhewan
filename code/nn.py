@@ -6,6 +6,7 @@ import numpy as np
 from code.data_process import get_train_data
 from code.data_process import get_test_data
 from sklearn import metrics
+from code.lib.plot import plot_history, plot_roc
 
 
 def build_model(init_size):
@@ -26,20 +27,6 @@ def build_model(init_size):
 
 
 EPOCHS = 30
-
-def plot_history(history):
-  plt.figure()
-  plt.xlabel('Epoch')
-  plt.ylabel('Mean Abs Error')
-  plt.plot(history.epoch, np.array(history.history['loss']),
-           label='Train Loss')
-  plt.plot(history.epoch, np.array(history.history['val_loss']),
-           label='Val Loss')
-  plt.plot(history.epoch, np.array(history.history['acc']),
-           label='Train Acc')
-  plt.plot(history.epoch, np.array(history.history['val_acc']), label='Val Acc')
-  plt.legend()
-  plt.show()
 
 
 def nn():
@@ -70,19 +57,7 @@ def nn():
     fpr, tpr, thresholds = metrics.roc_curve(test_label[:, -1], predictions[:, -1])
     auc = metrics.auc(fpr, tpr)
     print("Test Auc: ", auc)
-
-    plt.figure()
-    lw = 2
-    plt.plot(fpr, tpr, color='darkorange',
-             lw=lw, label='ROC curve (area = %0.2f)' % auc)
-    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('roc curve')
-    plt.legend(loc="lower right")
-    plt.show()
+    plot_roc(fpr, tpr, auc)
 
     test_data, test_ids = get_test_data()
 
