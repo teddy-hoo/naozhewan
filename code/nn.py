@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from code.data_process import get_train_data
 from code.data_process import get_test_data
+from sklearn import metrics
 
 
 def build_model(init_size):
@@ -53,13 +54,11 @@ def nn():
     print(train_data.shape, test_data.shape)
 
     model = build_model(train_data.shape[1])
-    model.summary()
+    # model.summary()
 
     history = model.fit(train_data, train_label, epochs=EPOCHS,batch_size=1000,
                         validation_split=0.2, verbose=0)
     # plot_history(history)
-
-    # model.fit(train_data.values, train_label.values, epochs=10, batch_size=1000, validation_split=0.2, )
 
     test_loss, test_acc = model.evaluate(test_data, test_label)
 
@@ -67,18 +66,27 @@ def nn():
     print('Test accuracy: ', test_acc)
 
     predictions = model.predict(test_data)
-    auc, _ = tf.metrics.auc(test_label, predictions)
-    print('Test auc: ', auc)
+
+    fpr, tpr, thresholds = metrics.roc_curve(test_label[:, -1], predictions[:, -1])
+    auc = metrics.auc(fpr, tpr)
+    print("Test Auc: ", auc)
+
+    plt.figure()
+    lw = 2
+    plt.plot(fpr, tpr, color='darkorange',
+             lw=lw, label='ROC curve (area = %0.2f)' % auc)
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('roc curve')
+    plt.legend(loc="lower right")
+    plt.show()
 
     test_data, test_ids = get_test_data()
 
-    # print(test_data.shape)
     predictions = model.predict(test_data)
-
-    # print(test_ids.shape)
-    # print(predictions.shape)
-    # print(predictions)
-    # print(np.argmax(predictions, axis=1))
 
     df = pd.DataFrame(data={'EID': test_ids, 'FORTARGET': np.argmax(predictions, axis=1), 'PROB': predictions[:,1]})
     df.to_csv('../data/credit_evaluation.csv', index=False)

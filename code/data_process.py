@@ -92,7 +92,7 @@ def test_data_process():
 def get_train_data():
     all_info = pd.read_csv('../data/processed/train_data.csv')
     all_info = all_info.sample(frac=1)
-    label = pd.get_dummies(all_info['是否老赖'])
+    label = pd.get_dummies(all_info['是否老赖']).values
     data = all_info.drop(columns=['小微企业ID', '是否老赖'])
     data = normalize(data.values)
     return data, label
