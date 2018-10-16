@@ -27,7 +27,7 @@ def qian_shui_ming_dan(path_prefix='../data/train/'):
     # print('将 主管税务机关 转化为数字')
     data['主管税务机关'] = data['主管税务机关'].fillna('未知机关')
     # print(data.head())
-    data['主管税务机关数字'] = data.apply(fill_tax_org, axis=1)
+    data['欠税税务机关'] = data.apply(fill_tax_org, axis=1)
     data = data.drop(columns=['主管税务机关'])
     # print(data.head())
 
@@ -35,14 +35,14 @@ def qian_shui_ming_dan(path_prefix='../data/train/'):
     # print('将 所欠税种 转化为数字')
     data['所欠税种'] = data['所欠税种'].fillna('未知税种')
     # print(data.head())
-    data['所欠税种数字'] = data.apply(fill_tax_type, axis=1)
-    data = data.drop(columns=['所欠税种'])
+    data['所欠税种'] = data.apply(fill_tax_type, axis=1)
+    # data = data.drop(columns=['所欠税种'])
     # print(data)
 
     # 加和相同税种的余额  然后将其打平 每个id变成一行
-    data = data.groupby(['小微企业ID', '主管税务机关数字', '所欠税种数字'], as_index=False).sum()
+    data = data.groupby(['小微企业ID', '欠税税务机关', '所欠税种'], as_index=False).sum()
     # data['主管税务机关-所欠税种'] = '税务' + data['主管税务机关数字'].map(str) + '-' + data['所欠税种数字'].map(str)
-    data = data.drop(columns=['主管税务机关数字', '所欠税种数字'])
+    # data = data.drop(columns=['欠税税务机关'])
 
     breaks = jenkspy.jenks_breaks(data['欠税余额(元)'].values, nb_class=20)
     # print(breaks)

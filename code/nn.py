@@ -1,12 +1,15 @@
 import tensorflow.keras as keras
 import tensorflow as tf
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 from code.data_process import get_train_data
 from code.data_process import get_test_data
 from sklearn import metrics
 from code.lib.plot import plot_history, plot_roc
+from code.lib.result_analyze import result_analyze
+from code.lib.utils import normalize
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def build_model(init_size):
@@ -26,45 +29,95 @@ def build_model(init_size):
     return model
 
 
-EPOCHS = 30
+EPOCHS = 40
 
 
 def nn():
-    data, label = get_train_data()
+    # data, label = get_train_data()
+    x = pd.read_csv('../data/processed/train_data.csv')
+
+    drop_list = [
+    '行业门类代码',
+    '投资总额(万元)',
+    '欠税税务机关',
+    '行政处罚次数',
+    '处罚机关_市场',
+    '处罚机关_邮政',
+    '审理机关_6_x',
+    '审理机关_7_x',
+    '文书类型_3.0',
+    '文书类型_8.0',
+    '诉讼地位_10',
+    '审理机关_0_x',
+    '诉讼地位_15',
+    '审理程序_1',
+    '审理机关_1_x',
+    '审理机关_2_x',
+    '公告类型_1',
+    '公告类型_2',
+    '公告类型_3',
+    '公告类型_12',
+    '公告类型_13',
+    '公告类型_14',
+    '公告类型_15',
+    '公告类型_16',
+    '公告类型_17',
+    '公告类型_18',
+    '公告类型_19',
+    '公告类型_21',
+    '公告类型_22',
+    '公告类型_23',
+    '公告类型_25',
+    '诉讼地位3_6',
+    '诉讼地位3_7'
+    ]
+    # x = x.drop(drop_list, axis=1)  # do not modify x, we will use it later
+
+    label = pd.get_dummies(x['是否老赖']).values
+    data = x.drop(columns=['小微企业ID', '是否老赖'])
+    data = normalize(data.values)
+
     msk = np.random.random(len(data)) < 0.8
     train_label = label[msk]
     train_data = data[msk]
 
-    test_label = label[~msk]
-    test_data = data[~msk]
+    eval_label = label[~msk]
+    eval_data = data[~msk]
 
-    print(train_data.shape, test_data.shape)
+    print(train_data.shape, eval_data.shape)
 
     model = build_model(train_data.shape[1])
     # model.summary()
 
-    history = model.fit(train_data, train_label, epochs=EPOCHS,batch_size=1000,
+    history = model.fit(train_data, train_label, epochs=EPOCHS, batch_size=1000,
                         validation_split=0.2, verbose=0)
-    # plot_history(history)
+    plot_history(history)
 
-    test_loss, test_acc = model.evaluate(test_data, test_label)
+    test_loss, test_acc = model.evaluate(eval_data, eval_label)
 
     print('Test loss: ', test_loss)
     print('Test accuracy: ', test_acc)
 
-    predictions = model.predict(test_data)
+    predictions = model.predict(eval_data)
+    # result_analyze(eval_data, eval_label, predictions)
 
-    fpr, tpr, thresholds = metrics.roc_curve(test_label[:, -1], predictions[:, -1])
+    fpr, tpr, thresholds = metrics.roc_curve(eval_label[:, -1], predictions[:, -1])
+    # print(fpr)
+    # print(tpr)
     auc = metrics.auc(fpr, tpr)
     print("Test Auc: ", auc)
-    plot_roc(fpr, tpr, auc)
+    # plot_roc(fpr, tpr, auc)
 
-    test_data, test_ids = get_test_data()
+    cm = metrics.confusion_matrix(eval_label[:, -1], np.argmax(predictions, axis=1))
+    sns.heatmap(cm, annot=True, fmt="d")
+    plt.show()
 
-    predictions = model.predict(test_data)
-
-    df = pd.DataFrame(data={'EID': test_ids, 'FORTARGET': np.argmax(predictions, axis=1), 'PROB': predictions[:,1]})
-    df.to_csv('../data/credit_evaluation.csv', index=False)
+    # test_data, test_ids = get_test_data()
+    #
+    # predictions = model.predict(test_data)
+    #
+    # df = pd.DataFrame(data={'EID': test_ids, 'FORTARGET': np.argmax(predictions, axis=1), 'PROB': predictions[:,1]})
+    # df.to_csv('../data/credit_evaluation.csv', index=False)
 
 
 if __name__ == '__main__':

@@ -20,9 +20,10 @@ def shen_pan_liu_cheng(path_prefix='../data/train/'):
     data['审理机关'] = data.apply(fill_institution, axis=1)
     data['公告类型'] = data.apply(fill_gong_gao, axis=1)
     data['诉讼地位'] = data.apply(fill_role, axis=1)
+    data['诉讼地位3'] = data['诉讼地位']
 
     data = data.drop(columns=['日期类别','具体日期','涉案事由'])
-    data = pd.get_dummies(data, prefix=['诉讼地位','审理机关','公告类型'], columns=['诉讼地位','审理机关','公告类型'])
+    data = pd.get_dummies(data, prefix=['诉讼地位3','审理机关','公告类型'], columns=['诉讼地位','审理机关','公告类型'])
     data = data.groupby('小微企业ID').sum().reset_index()
     return data
 

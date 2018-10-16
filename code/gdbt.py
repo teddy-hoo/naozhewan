@@ -1,15 +1,22 @@
-import pandas
+import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn import svm
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn import metrics
+from code.lib.plot import plot_history, plot_roc
+
+
+pd.options.display.max_rows = 1000
+pd.options.display.max_columns = 1000
 
 
 def gdbt():
 
-    df = pandas.read_csv('../data/processed/train_data.csv')
+    df = pd.read_csv('../data/processed/train_data.csv')
+    print(df.values.shape)
 
     X = np.asarray(df.values[:,2:-1], np.float32)
     Y = np.asarray(df.values[:,-1], np.float32)
@@ -23,24 +30,13 @@ def gdbt():
     clf.fit(X_train, y_train)
 
     y_pred = clf.predict(X_test)
+    print(y_pred[:100])
+    print(y_test[:100])
     print(accuracy_score(y_test, y_pred))
-
-    PC = len(y_test[y_test[:] == 1])
-    NC = len(y_test[y_test[:] == 0])
-    TP = 0
-    FP = 0
-    for i in range(0, len(y_pred)):
-        if y_test[i] == 1 and y_pred[i] > 0:
-            # print('TP: ', predictions[i][0], ' ', predictions[i][1])
-            TP += 1
-        if y_test[i] == 0 and y_pred[i] > 0:
-            # print('FP: ', predictions[i][0], ' ', predictions[i][1])
-            FP += 1
-    print('Total: ', len(y_test))
-    print('PC: ', PC)
-    print('NC: ', NC)
-    print('TP: ', TP)
-    print('FP: ', FP)
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, y_pred)
+    auc = metrics.auc(fpr, tpr)
+    print("Test Auc: ", auc)
+    plot_roc(fpr, tpr, auc)
 
 
 if __name__ == '__main__':

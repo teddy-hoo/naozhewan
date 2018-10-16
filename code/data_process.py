@@ -115,7 +115,7 @@ if __name__ == '__main__':
     print(test.shape)
     test.to_csv('../data/processed/test_data.csv', index=False)
 
-    print(train.columns.values)
-    print(test.columns.values)
-    print(np.setdiff1d(train.columns.values, test.columns.values))
-    print(np.setdiff1d(test.columns.values, train.columns.values))
+    # print(train.columns.values)
+    # print(test.columns.values)
+    # print(np.setdiff1d(train.columns.values, test.columns.values))
+    # print(np.setdiff1d(test.columns.values, train.columns.values))

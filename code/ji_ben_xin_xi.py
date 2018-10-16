@@ -18,7 +18,6 @@ def ji_ben_xin_xi(path_prefix='../data/train/'):
 
     data = pd.read_csv(path_prefix + '1.csv')
 
-    # print(data['行业门类代码'].unique())
     data['行业门类代码'], _ = pd.factorize(data['行业门类代码'])
     # print(data['行业门类代码'].unique())
 
