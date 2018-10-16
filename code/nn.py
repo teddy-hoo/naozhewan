@@ -2,8 +2,6 @@ import tensorflow.keras as keras
 import tensorflow as tf
 import pandas as pd
 import numpy as np
-from code.data_process import get_train_data
-from code.data_process import get_test_data
 from sklearn import metrics
 from code.lib.plot import plot_history, plot_roc
 from code.lib.result_analyze import result_analyze
@@ -18,6 +16,7 @@ def build_model(init_size):
     model.add(keras.layers.Dropout(0.5))
     model.add(keras.layers.Dense(32, activation='relu'))
     model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Dense(16, activation='relu'))
 
     model.add(keras.layers.Dense(2, activation=tf.nn.sigmoid))
 
@@ -27,7 +26,7 @@ def build_model(init_size):
     return model
 
 
-EPOCHS = 30
+EPOCHS = 20
 
 
 def nn():
@@ -69,7 +68,7 @@ def nn():
     '诉讼地位3_6',
     '诉讼地位3_7'
     ]
-    x = x.drop(drop_list, axis=1)  # do not modify x, we will use it later
+    # x = x.drop(drop_list, axis=1)  # do not modify x, we will use it later
 
     label = pd.get_dummies(x['是否老赖']).values
     data = x.drop(columns=['小微企业ID', '是否老赖'])
@@ -88,7 +87,7 @@ def nn():
     model.summary()
 
     history = model.fit(train_data, train_label, epochs=EPOCHS, batch_size=100,
-                        validation_split=0.3, verbose=0)
+                        validation_split=0.2, verbose=0)
     plot_history(history)
 
     test_loss, test_acc = model.evaluate(eval_data, eval_label)
@@ -104,7 +103,7 @@ def nn():
     # print(tpr)
     auc = metrics.auc(fpr, tpr)
     print("Test Auc: ", auc)
-    plot_roc(fpr, tpr, auc)
+    # plot_roc(fpr, tpr, auc)
 
     print(np.count_nonzero(eval_label[:, -1]))
     print(np.count_nonzero(np.argmax(predictions, axis=1)))
