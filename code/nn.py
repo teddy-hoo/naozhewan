@@ -14,14 +14,12 @@ import matplotlib.pyplot as plt
 
 def build_model(init_size):
     model = keras.Sequential()
-    model.add(keras.layers.Dense(128, activation='relu', input_shape=(init_size, )))
-    model.add(keras.layers.Dropout(0.5))
-    model.add(keras.layers.Dense(64, activation='relu'))
+    model.add(keras.layers.Dense(64, activation='relu', input_shape=(init_size, )))
     model.add(keras.layers.Dropout(0.5))
     model.add(keras.layers.Dense(32, activation='relu'))
     model.add(keras.layers.Dropout(0.5))
 
-    model.add(keras.layers.Dense(2, activation=tf.nn.softmax))
+    model.add(keras.layers.Dense(2, activation=tf.nn.sigmoid))
 
     model.compile(optimizer=tf.train.AdamOptimizer(0.001),
                   loss='categorical_crossentropy',
@@ -29,7 +27,7 @@ def build_model(init_size):
     return model
 
 
-EPOCHS = 40
+EPOCHS = 30
 
 
 def nn():
@@ -71,7 +69,7 @@ def nn():
     '诉讼地位3_6',
     '诉讼地位3_7'
     ]
-    # x = x.drop(drop_list, axis=1)  # do not modify x, we will use it later
+    x = x.drop(drop_list, axis=1)  # do not modify x, we will use it later
 
     label = pd.get_dummies(x['是否老赖']).values
     data = x.drop(columns=['小微企业ID', '是否老赖'])
@@ -87,10 +85,10 @@ def nn():
     print(train_data.shape, eval_data.shape)
 
     model = build_model(train_data.shape[1])
-    # model.summary()
+    model.summary()
 
-    history = model.fit(train_data, train_label, epochs=EPOCHS, batch_size=1000,
-                        validation_split=0.2, verbose=0)
+    history = model.fit(train_data, train_label, epochs=EPOCHS, batch_size=100,
+                        validation_split=0.3, verbose=0)
     plot_history(history)
 
     test_loss, test_acc = model.evaluate(eval_data, eval_label)
@@ -106,8 +104,10 @@ def nn():
     # print(tpr)
     auc = metrics.auc(fpr, tpr)
     print("Test Auc: ", auc)
-    # plot_roc(fpr, tpr, auc)
+    plot_roc(fpr, tpr, auc)
 
+    print(np.count_nonzero(eval_label[:, -1]))
+    print(np.count_nonzero(np.argmax(predictions, axis=1)))
     cm = metrics.confusion_matrix(eval_label[:, -1], np.argmax(predictions, axis=1))
     sns.heatmap(cm, annot=True, fmt="d")
     plt.show()
