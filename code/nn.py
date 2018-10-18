@@ -30,10 +30,12 @@ def build_model(init_size):
     return model
 
 
-EPOCHS = 20
-
-
-def nn():
+def nn(epochs, batch_size, class_weight):
+    # print()
+    # print('##################')
+    # print('epoch: ', epochs)
+    # print('batch size: ', batch_size)
+    # print('class weight: ', class_weight[1])
     # data, label = get_train_data()
     x = pd.read_csv('../data/processed/train_data.csv')
     data = normalize(x.drop(columns=['小微企业ID', '是否老赖']).values)
@@ -44,10 +46,17 @@ def nn():
 
     train_data = data[msk]
     eval_data = data[~msk]
-    class_1 = train_data[np.where(train_data[:, -1] == 1)[0]]
-    # 调整class为1的样本量来解决样本量不平均的问题
-    for i in range(20):
-        train_data = np.concatenate((train_data, class_1), axis=0)
+
+    train_class_0 = train_data[np.where(train_data[:, -1] == 0)[0]]
+    train_class_1 = train_data[np.where(train_data[:, -1] == 1)[0]]
+
+    down_rate = np.random.random(len(train_class_0)) < 0.5
+
+    train_class_0 = train_class_0[down_rate]
+
+    train_data = train_class_0
+    for i in range(5):
+        train_data = np.concatenate((train_data, train_class_1), axis=0)
     np.random.shuffle(train_data)
 
     train_label = train_data[:, -2:]
@@ -56,34 +65,40 @@ def nn():
     eval_label = eval_data[:, -2:]
     eval_data = eval_data[:, 1:-2]
 
-    print(train_data.shape, train_label.shape, eval_data.shape, eval_label.shape)
+    # print(train_data.shape, train_label.shape, eval_data.shape, eval_label.shape)
 
     model = build_model(train_data.shape[1])
-    model.summary()
+    # model.summary()
 
-    history = model.fit(train_data, train_label, epochs=EPOCHS, batch_size=100,
+    history = model.fit(train_data, train_label, epochs=epochs,
+                        batch_size=batch_size,
                         validation_split=0.2, verbose=0,
                         # 调整loss-weight来解决样本量不平均的问题
-                        class_weight={0: 1, 1: 1})
+                        class_weight=class_weight)
     plot_history(history)
 
-    test_loss, test_acc = model.evaluate(eval_data, eval_label)
-
-    print('Test loss: ', test_loss)
-    print('Test accuracy: ', test_acc)
+    test_loss, test_acc = model.evaluate(eval_data, eval_label, verbose=0)
+    #
+    # print('Test loss: ', test_loss)
+    # print('Test accuracy: ', test_acc)
 
     predictions = model.predict(eval_data)
     # result_analyze(eval_data, eval_label, predictions)
 
-    fpr, tpr, thresholds = metrics.roc_curve(eval_label[:, -1], predictions[:, -1])
+    try:
+        fpr, tpr, thresholds = metrics.roc_curve(eval_label[:, -1], predictions[:, -1])
+    except:
+        return
     # print(fpr)
     # print(tpr)
     auc = metrics.auc(fpr, tpr)
-    print("Test Auc: ", auc)
+    # print("Test Auc: ", auc)
     plot_roc(fpr, tpr, auc)
+    print("epoch: %5d, batch size: %5d, class weight: %5d, loss: %8.4f, acc: %8.4f, auc: %8.4f" %
+          (epochs, batch_size, class_weight[1], test_loss, test_acc, auc))
 
-    print(np.count_nonzero(eval_label[:, -1]))
-    print(np.count_nonzero(np.argmax(predictions, axis=1)))
+    # print(np.count_nonzero(eval_label[:, -1]))
+    # print(np.count_nonzero(np.argmax(predictions, axis=1)))
     cm = metrics.confusion_matrix(eval_label[:, -1], np.argmax(predictions, axis=1))
     sns.heatmap(cm, annot=True, fmt="d")
     plt.show()
@@ -97,4 +112,18 @@ def nn():
 
 
 if __name__ == '__main__':
-    nn()
+    nn(50, 100, {0:1, 1:1})
+    exit()
+    epoch_list = [10, 20, 30, 40, 50]
+    batch_size_list = [100, 120, 140, 160, 180, 200]
+    class_weight_list = [
+        {0: 1, 1: 1},
+        {0: 1, 1: 2},
+        {0: 1, 1: 3},
+        {0: 1, 1: 4},
+        {0: 1, 1: 5},
+    ]
+    for e in epoch_list:
+        for b in batch_size_list:
+            for c in class_weight_list:
+                nn(e, b, c)

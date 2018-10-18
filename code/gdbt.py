@@ -51,8 +51,8 @@ def gdbt():
     eval_label = np.asarray(eval_data[:, -1], np.float32)
     eval_data = np.asarray(eval_data[:, 1:-1], np.float32)
 
-    clf = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.01,
-            max_depth=1, random_state=432)
+    clf = GradientBoostingClassifier(n_estimators=500, learning_rate=0.01,
+                                     max_depth=1, random_state=432, verbose=1)
     clf.fit(train_data, train_label)
 
     y_pred = clf.predict(eval_data)
