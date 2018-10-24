@@ -60,10 +60,10 @@ def nn(epochs, batch_size, class_weight):
     np.random.shuffle(train_data)
 
     train_label = train_data[:, -2:]
-    train_data = train_data[:, 1:-2]
+    train_data = train_data[:, :-2]
 
     eval_label = eval_data[:, -2:]
-    eval_data = eval_data[:, 1:-2]
+    eval_data = eval_data[:, :-2]
 
     # print(train_data.shape, train_label.shape, eval_data.shape, eval_label.shape)
 
@@ -103,16 +103,19 @@ def nn(epochs, batch_size, class_weight):
     sns.heatmap(cm, annot=True, fmt="d")
     plt.show()
 
-    # test_data, test_ids = get_test_data()
-    #
-    # predictions = model.predict(test_data)
-    #
-    # df = pd.DataFrame(data={'EID': test_ids, 'FORTARGET': np.argmax(predictions, axis=1), 'PROB': predictions[:,1]})
-    # df.to_csv('../data/credit_evaluation.csv', index=False)
+    all_info = pd.read_csv('../data/processed/test_data.csv')
+    ids = all_info['小微企业ID'].values
+    data = all_info.drop(columns=['小微企业ID'])
+    data = normalize(data.values)
+
+    predictions = model.predict(data)
+
+    df = pd.DataFrame(data={'EID': ids, 'FORTARGET': np.argmax(predictions, axis=1), 'PROB': predictions[:,1]})
+    df.to_csv('../data/credit_evaluation.csv', index=False)
 
 
 if __name__ == '__main__':
-    nn(50, 100, {0:1, 1:1})
+    nn(40, 100, {0:1, 1:1})
     exit()
     epoch_list = [10, 20, 30, 40, 50]
     batch_size_list = [100, 120, 140, 160, 180, 200]

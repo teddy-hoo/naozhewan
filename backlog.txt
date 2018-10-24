@@ -4,5 +4,6 @@
 4. 把loss-weight设置下，把1类的loss-weight提高，让模型去看1类的多一些
 5. 尝试看看有没有基于auc值的训练
 6. 尝试其他的imbalanced data处理方法
-7. 尝试k-means
+7. 尝试k-means 补偿正样本数据
+8. 尝试随机森林算法
 
