@@ -4,6 +4,7 @@
 4. 把loss-weight设置下，把1类的loss-weight提高，让模型去看1类的多一些
 5. 尝试看看有没有基于auc值的训练
 6. 尝试其他的imbalanced data处理方法
-7. 尝试k-means 补偿正样本数据
-8. 尝试随机森林算法
+7. 尝试一下这篇文章里的方法  https://www.kdnuggets.com/2018/06/three-techniques-improve-machine-learning-model-performance-imbalanced-datasets.html?spm=a2c4e.11153940.blogcont600963.13.3e5a7a44xLhMsE
+8. 尝试k-means 补偿正样本数据
+9. 尝试随机森林算法
 
