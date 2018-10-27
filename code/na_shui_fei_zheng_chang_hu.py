@@ -2,6 +2,7 @@
 
 import pandas as pd
 from code.lib.tax import tax_organization_value
+from code.lib.date import date_to_now_month
 
 
 def na_shui_fei_zheng_change_hu(path_prefix='../data/train/'):
@@ -13,8 +14,9 @@ def na_shui_fei_zheng_change_hu(path_prefix='../data/train/'):
     data = pd.read_csv(path_prefix + '6.csv')
 
     # 现在不知道认定日期是做什么用的，所以暂时先去掉，放在后面优化
-    data = data.drop(columns=['认定日期'])
-
+    # data = data.drop(columns=['认定日期'])
+    data['认定日期'] = data.apply(filldate, axis=1)
+    #print(data['认定日期'])
     # 将 主管税务机关 转化为数字
     # print('将 主管税务机关 转化为数字')
     data = data.fillna('未知机关')
@@ -27,11 +29,15 @@ def na_shui_fei_zheng_change_hu(path_prefix='../data/train/'):
     data = data.groupby('小微企业ID').sum().reset_index()
     # print(data['小微企业ID'])
 
+    # print(data)
     return data
 
 
 def fill(row):
     return tax_organization_value(row['主管税务机关'])
+
+def filldate(row):
+    return date_to_now_month(row['认定日期'])
 
 
 if __name__ == '__main__':

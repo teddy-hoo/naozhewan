@@ -19,7 +19,7 @@ def ji_ben_xin_xi(path_prefix='../data/train/'):
     data = pd.read_csv(path_prefix + '1.csv')
 
     data['行业门类代码'], _ = pd.factorize(data['行业门类代码'])
-    # print(data['行业门类代码'].unique())
+    #print(data['行业门类代码'].unique())
 
     currency_exchange(data, '注册资金(万元)', '注册资本(金)币种')
     # data['注册资金(万元)'].plot(kind='line', title='注册资金（万元）人民币')
